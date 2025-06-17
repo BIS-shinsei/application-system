@@ -1,6 +1,3 @@
-申請一覧と承認管理が反応しない問題を解決します！JavaScriptが不完全でした。完全に動作するコードをお渡しします：
-
-```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8,19 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>オンライン申請管理システム</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-      
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-      
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -29,42 +22,35 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
         }
-      
+        
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 30px;
             text-align: center;
         }
-      
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-      
-        .main-content {
-            padding: 30px;
-        }
-      
-        .online-status {
+        
+        .main-content { padding: 30px; }
+        
+        .status-bar {
             background: #28a745;
             color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            padding: 15px 20px;
+            border-radius: 10px;
             margin-bottom: 20px;
-            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
-      
+        
         .tab-buttons {
             display: flex;
             gap: 10px;
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
-      
+        
         .tab-button {
             background: #6c757d;
             color: white;
@@ -77,45 +63,39 @@
             flex: 1;
             min-width: 150px;
         }
-      
+        
         .tab-button.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-      
-        .tab-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-      
+        
         .tab-content {
             display: none;
         }
-      
+        
         .tab-content.active {
             display: block;
             animation: fadeIn 0.3s ease-in;
         }
-      
+        
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-      
+        
         .form-group {
             margin-bottom: 25px;
         }
-      
+        
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #333;
-            font-size: 1rem;
         }
-      
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+        
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 15px;
             border: 2px solid #e1e5e9;
@@ -123,19 +103,18 @@
             font-size: 16px;
             transition: all 0.3s;
         }
-      
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-      
+        
         .form-group textarea {
             height: 120px;
             resize: vertical;
         }
-      
+        
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -149,19 +128,20 @@
             margin-right: 10px;
             margin-bottom: 10px;
         }
-      
+        
         .btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
-      
+        
         .btn-success {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         }
-      
+        
         .btn-danger {
             background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
         }
-      
+        
         .application-item {
             background: #f8f9fa;
             border-radius: 15px;
@@ -169,23 +149,29 @@
             margin-bottom: 20px;
             border-left: 6px solid #667eea;
             position: relative;
+            transition: all 0.3s;
         }
-      
+        
+        .application-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
         .application-item.pending {
             border-left-color: #ffc107;
             background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
         }
-      
+        
         .application-item.approved {
             border-left-color: #28a745;
             background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
         }
-      
+        
         .application-item.rejected {
             border-left-color: #dc3545;
             background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
         }
-      
+        
         .status-badge {
             display: inline-block;
             padding: 8px 16px;
@@ -194,22 +180,11 @@
             font-weight: 600;
             margin-bottom: 15px;
         }
-      
-        .status-badge.pending {
-            background: #ffc107;
-            color: #000;
-        }
-      
-        .status-badge.approved {
-            background: #28a745;
-            color: white;
-        }
-      
-        .status-badge.rejected {
-            background: #dc3545;
-            color: white;
-        }
-      
+        
+        .status-badge.pending { background: #ffc107; color: #000; }
+        .status-badge.approved { background: #28a745; color: white; }
+        .status-badge.rejected { background: #dc3545; color: white; }
+        
         .urgency-badge {
             position: absolute;
             top: 15px;
@@ -219,11 +194,11 @@
             font-size: 12px;
             font-weight: 600;
         }
-      
+        
         .urgency-badge.高 { background: #dc3545; color: white; }
         .urgency-badge.中 { background: #ffc107; color: #000; }
         .urgency-badge.低 { background: #28a745; color: white; }
-      
+        
         .approval-section {
             background: white;
             border-radius: 10px;
@@ -231,7 +206,7 @@
             margin-top: 20px;
             border: 2px solid #e9ecef;
         }
-      
+        
         .comment-box {
             width: 100%;
             padding: 12px;
@@ -241,14 +216,14 @@
             min-height: 80px;
             resize: vertical;
         }
-      
+        
         .approval-actions {
             display: flex;
             gap: 10px;
             margin-top: 15px;
             flex-wrap: wrap;
         }
-      
+        
         .notification {
             position: fixed;
             top: 20px;
@@ -262,22 +237,17 @@
             max-width: 400px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-      
-        .notification.success {
-            background: #28a745;
-        }
-      
-        .notification.error {
-            background: #dc3545;
-        }
-      
+        
+        .notification.success { background: #28a745; }
+        .notification.error { background: #dc3545; }
+        
         .approval-history {
             background: #f8f9fa;
             border-radius: 8px;
             padding: 15px;
             margin-top: 15px;
         }
-      
+        
         .approval-step {
             background: white;
             padding: 15px;
@@ -286,42 +256,44 @@
             border-left: 4px solid #007bff;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-      
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
         @media (max-width: 768px) {
-            .main-content {
-                padding: 20px;
-            }
-          
-            .tab-buttons {
-                flex-direction: column;
-            }
+            .main-content { padding: 20px; }
+            .tab-buttons { flex-direction: column; }
+            .status-bar { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
 <body>
     <div class="notification" id="notification"></div>
-  
+    
     <div class="container">
         <div class="header">
             <h1>📋 オンライン申請管理システム</h1>
-            <p>完全動作版 - 申請から承認まで</p>
+            <p>GitHub Pages版 - 24時間365日稼働</p>
         </div>
-      
+        
         <div class="main-content">
-            <div class="online-status">
-                🌐 オンライン稼働中 - データ件数: <span id="dataCount">0</span>件
+            <div class="status-bar">
+                <div><strong>🌐 システム状態:</strong> オンライン稼働中</div>
+                <div>
+                    <strong>📊 データ件数:</strong> <span id="dataCount">0</span>件
+                    <strong>📝 審査中:</strong> <span id="pendingCount">0</span>件
+                    <strong>✅ 承認済:</strong> <span id="approvedCount">0</span>件
+                    <strong>❌ 否決:</strong> <span id="rejectedCount">0</span>件
+                </div>
             </div>
-          
+            
             <div class="tab-buttons">
-                <button class="tab-button active" onclick="showTab('apply')">
-                    ➕ 新規申請
-                </button>
-                <button class="tab-button" onclick="showTab('list')">
-                    📄 申請一覧
-                </button>
-                <button class="tab-button" onclick="showTab('admin')">
-                    ✅ 承認管理
-                </button>
+                <button class="tab-button active" onclick="showTab('apply')">➕ 新規申請</button>
+                <button class="tab-button" onclick="showTab('list')">📄 申請一覧</button>
+                <button class="tab-button" onclick="showTab('admin')">✅ 承認管理</button>
             </div>
 
             <!-- 新規申請タブ -->
@@ -332,12 +304,12 @@
                         <label for="applicantName">👤 申請者名 *</label>
                         <input type="text" id="applicantName" required placeholder="例: 山田太郎">
                     </div>
-                  
+                    
                     <div class="form-group">
                         <label for="applicantEmail">📧 メールアドレス *</label>
                         <input type="email" id="applicantEmail" required placeholder="例: yamada@company.com">
                     </div>
-                  
+                    
                     <div class="form-group">
                         <label for="applicationType">🏷️ 申請種別 *</label>
                         <select id="applicationType" required>
@@ -350,17 +322,17 @@
                             <option value="その他">📝 その他</option>
                         </select>
                     </div>
-                  
+                    
                     <div class="form-group">
                         <label for="applicationDate">📅 申請日 *</label>
                         <input type="date" id="applicationDate" required>
                     </div>
-                  
+                    
                     <div class="form-group">
                         <label for="applicationDetails">📝 申請内容 *</label>
                         <textarea id="applicationDetails" required placeholder="申請の詳細を具体的に入力してください"></textarea>
                     </div>
-                  
+                    
                     <div class="form-group">
                         <label for="urgency">⚡ 緊急度</label>
                         <select id="urgency" required>
@@ -369,7 +341,7 @@
                             <option value="高">🔴 高 - 緊急処理</option>
                         </select>
                     </div>
-                  
+                    
                     <button type="submit" class="btn">📤 申請を提出</button>
                 </form>
             </div>
@@ -378,65 +350,14 @@
             <div id="list-tab" class="tab-content">
                 <h2>📄 申請一覧</h2>
                 <div id="applicationList">
-                    <p>申請データを読み込み中...</p>
+                    <div class="no-data">
+                        <h3>📋 申請データがありません</h3>
+                        <p>新規申請を作成してください</p>
+                    </div>
                 </div>
             </div>
 
             <!-- 承認管理タブ -->
             <div id="admin-tab" class="tab-content">
                 <h2>✅ 承認管理</h2>
-                <div style="background: #e7f3ff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                    <h3>🔄 承認の手順</h3>
-                    <ol style="margin-left: 20px; margin-top: 10px;">
-                        <li><strong>承認者名</strong>を入力してください</li>
-                        <li>申請内容を確認してください</li>
-                        <li><strong>コメント</strong>を入力してください</li>
-                        <li><strong>承認</strong>または<strong>否決</strong>ボタンをクリック</li>
-                    </ol>
-                </div>
-              
-                <div class="form-group">
-                    <label for="approverName">👤 承認者名</label>
-                    <input type="text" id="approverName" placeholder="承認者名を入力" value="管理者">
-                </div>
-              
-                <div id="adminList">
-                    <p>承認データを読み込み中...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // データ保存用
-        let applications = JSON.parse(localStorage.getItem('applications')) || [];
-        let nextId = parseInt(localStorage.getItem('nextId')) || 1;
-
-        // データ保存関数
-        function saveToStorage() {
-            localStorage.setItem('applications', JSON.stringify(applications));
-            localStorage.setItem('nextId', nextId.toString());
-            updateDataCount();
-        }
-
-        // データ件数更新
-        function updateDataCount() {
-            document.getElementById('dataCount').textContent = applications.length;
-        }
-
-        // 通知表示
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.style.display = 'block';
-          
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
-        }
-
-        // タブ切り替え関数
-        function showTab(tabName) {
-            // すべてのタブを非表示
-            document.querySelector
+                <div style="background: #e7f3ff; padding: 20px; border-radius: 10px; margin-bottom

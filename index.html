@@ -90,6 +90,12 @@
         
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .form-group {
@@ -262,6 +268,22 @@
             background: #dc3545;
         }
         
+        .approval-history {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .approval-step {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 padding: 20px;
@@ -387,9 +409,22 @@
         let applications = JSON.parse(localStorage.getItem('applications')) || [];
         let nextId = parseInt(localStorage.getItem('nextId')) || 1;
 
-        // 通知表示
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.style.
+        // ページ読み込み時の初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 今日の日付をデフォルトに設定
+            document.getElementById('applicationDate').valueAsDate = new Date();
+            
+            // 申請フォームの送信処理
+            document.getElementById('applicationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const application = {
+                    id: nextId++,
+                    applicantName: document.getElementById('applicantName').value,
+                    applicantEmail: document.getElementById('applicantEmail').value,
+                    applicationType: document.getElementById('applicationType').value,
+                    applicationDate: document.getElementById('applicationDate').value,
+                    applicationDetails: document.getElementById('applicationDetails').value,
+                    urgency: document.getElementById('urgency').value,
+                    status: 'pending',
+                    submittedAt: new Date().toLocaleString
